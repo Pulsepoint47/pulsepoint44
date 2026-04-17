@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Sun, Moon, LogOut, Heart, User, LayoutDashboard } from "lucide-react";
+import { Sun, Moon, LogOut, User, LayoutDashboard, Sparkles, MessageCircle } from "lucide-react";
+import Logo from "@/components/Logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,11 +27,8 @@ const Navbar = () => {
   return (
     <nav className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-            <Heart className="h-5 w-5 text-primary" />
-          </div>
-          <span className="text-xl font-bold text-foreground">PulsePoint</span>
+        <Link to="/" className="group">
+          <Logo size="sm" />
         </Link>
         
         <div className="flex items-center gap-2">
