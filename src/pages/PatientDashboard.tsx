@@ -125,20 +125,24 @@ const PatientDashboard = () => {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-1">
-              Welcome back, {profile?.full_name?.split(" ")[0] || "Patient"}
-            </h1>
-            <p className="text-muted-foreground">Here&apos;s your health overview</p>
-          </div>
-          <div className="flex gap-3">
-            <Link to="/find-doctors">
-              <Button className="gap-2">
-                <Stethoscope className="h-4 w-4" />
-                Find a Doctor
-              </Button>
-            </Link>
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-primary p-6 sm:p-8 mb-8 shadow-elegant">
+          <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)]" aria-hidden />
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium text-primary-foreground/80 mb-1">Patient Dashboard</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground tracking-tight">
+                Welcome back, {profile?.full_name?.split(" ")[0] || "Patient"}
+              </h1>
+              <p className="text-primary-foreground/80 mt-1">Here&apos;s your health overview at a glance</p>
+            </div>
+            <div className="flex gap-3">
+              <Link to="/find-doctors">
+                <Button size="lg" variant="secondary" className="gap-2 rounded-xl shadow-soft">
+                  <Stethoscope className="h-4 w-4" />
+                  Find a Doctor
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
