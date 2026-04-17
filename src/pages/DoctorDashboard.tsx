@@ -161,42 +161,46 @@ const DoctorDashboard = () => {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-1">
-              Welcome back, Dr. {profile?.full_name?.split(" ").slice(-1)[0] || "Doctor"}
-            </h1>
-            <p className="text-muted-foreground">Here&apos;s what&apos;s happening today</p>
-          </div>
-          <div className="flex gap-3">
-            <Link to="/conversations">
-              <Button variant="outline" className="gap-2 relative">
-                <MessageSquare className="h-4 w-4" />
-                Messages
-                {totalUnread > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 min-w-5 p-0 flex items-center justify-center bg-primary">
-                    {totalUnread}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-primary p-6 sm:p-8 mb-8 shadow-elegant">
+          <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)]" aria-hidden />
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium text-primary-foreground/80 mb-1">Doctor Dashboard</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground tracking-tight">
+                Welcome back, Dr. {profile?.full_name?.split(" ").slice(-1)[0] || "Doctor"}
+              </h1>
+              <p className="text-primary-foreground/80 mt-1">Here&apos;s what&apos;s happening with your practice today</p>
+            </div>
+            <div className="flex gap-3">
+              <Link to="/conversations">
+                <Button size="lg" variant="secondary" className="gap-2 relative rounded-xl shadow-soft">
+                  <MessageSquare className="h-4 w-4" />
+                  Messages
+                  {totalUnread > 0 && (
+                    <Badge className="absolute -top-2 -right-2 h-5 min-w-5 p-0 flex items-center justify-center bg-destructive text-destructive-foreground">
+                      {totalUnread}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* Stats */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((s) => (
-            <Card key={s.label}>
+            <Card key={s.label} className="border-border/60 hover:shadow-soft transition-smooth">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-3">
-                  <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center`}>
+                  <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
                     <s.icon className={`h-5 w-5 ${s.color}`} />
                   </div>
-                  <span className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-full">
+                  <span className="text-xs text-success font-medium bg-success/10 px-2 py-1 rounded-full">
                     {s.change}
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                <p className="text-2xl font-bold text-foreground tracking-tight">{s.value}</p>
                 <p className="text-sm text-muted-foreground">{s.label}</p>
               </CardContent>
             </Card>
