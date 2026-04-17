@@ -1,14 +1,42 @@
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Activity, Heart, Thermometer, Droplets } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { 
+  Activity, 
+  Heart, 
+  Thermometer, 
+  Droplets, 
+  MessageSquare, 
+  Video, 
+  Calendar,
+  Stethoscope,
+  ArrowRight,
+  Plus,
+  Clock
+} from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+interface ConversationPreview {
+  id: string;
+  doctor_name: string | null;
+  specialization: string | null;
+  last_message?: string;
+  unread_count: number;
+}
 
 const vitals = [
-  { label: "Heart Rate", value: "72 bpm", icon: Heart, status: "Normal" },
-  { label: "Blood Pressure", value: "120/80", icon: Activity, status: "Normal" },
-  { label: "Temperature", value: "98.6°F", icon: Thermometer, status: "Normal" },
-  { label: "Blood Sugar", value: "95 mg/dL", icon: Droplets, status: "Normal" },
+  { label: "Heart Rate", value: "72 bpm", icon: Heart, status: "Normal", color: "text-rose-500" },
+  { label: "Blood Pressure", value: "120/80", icon: Activity, status: "Normal", color: "text-primary" },
+  { label: "Temperature", value: "98.6°F", icon: Thermometer, status: "Normal", color: "text-orange-500" },
+  { label: "Blood Sugar", value: "95 mg/dL", icon: Droplets, status: "Normal", color: "text-blue-500" },
 ];
 
 const upcomingAppointments = [
@@ -16,72 +44,267 @@ const upcomingAppointments = [
   { doctor: "Dr. Patel", specialty: "General Practice", date: "Apr 12, 2026", time: "2:30 PM" },
 ];
 
-const medications = [
-  { name: "Lisinopril", dosage: "10mg", frequency: "Once daily", refillDate: "Apr 15" },
-  { name: "Metformin", dosage: "500mg", frequency: "Twice daily", refillDate: "Apr 20" },
-  { name: "Vitamin D", dosage: "1000 IU", frequency: "Once daily", refillDate: "May 1" },
-];
+const PatientDashboard = () => {
+  const { user, profile } = useAuth();
+  const [conversations, setConversations] = useState<ConversationPreview[]>([]);
+  const [loadingConvs, setLoadingConvs] = useState(true);
 
-const PatientDashboard = () => (
-  <div className="min-h-screen bg-background">
-    <Navbar />
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Patient Dashboard</h1>
-      <p className="text-muted-foreground mb-8">Welcome, Sarah Johnson</p>
+  useEffect(() => {
+    if (!user) return;
 
-      {/* Vitals */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {vitals.map((v) => (
-          <Card key={v.label}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-2 mb-2">
-                <v.icon className="h-5 w-5 text-primary" />
-                <Badge variant="secondary">{v.status}</Badge>
+    const fetchConversations = async () => {
+      setLoadingConvs(true);
+
+      const { data: convs } = await supabase
+        .from("conversations")
+        .select("*")
+        .eq("patient_id", user.id)
+        .order("updated_at", { ascending: false })
+        .limit(3);
+
+      if (convs) {
+        const previews = await Promise.all(
+          convs.map(async (conv) => {
+            // Fetch doctor profile
+            const { data: doctorProfile } = await supabase
+              .from("profiles")
+              .select("full_name")
+              .eq("user_id", conv.doctor_id)
+              .single();
+
+            // Fetch doctor specialization
+            const { data: doctorData } = await supabase
+              .from("doctors")
+              .select("specialization")
+              .eq("user_id", conv.doctor_id)
+              .single();
+
+            // Fetch last message
+            const { data: lastMsg } = await supabase
+              .from("messages")
+              .select("content")
+              .eq("conversation_id", conv.id)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .single();
+
+            // Count unread
+            const { count } = await supabase
+              .from("messages")
+              .select("*", { count: "exact", head: true })
+              .eq("conversation_id", conv.id)
+              .eq("is_read", false)
+              .neq("sender_id", user.id);
+
+            return {
+              id: conv.id,
+              doctor_name: doctorProfile?.full_name || null,
+              specialization: doctorData?.specialization || null,
+              last_message: lastMsg?.content,
+              unread_count: count || 0,
+            };
+          })
+        );
+
+        setConversations(previews);
+      }
+
+      setLoadingConvs(false);
+    };
+
+    fetchConversations();
+  }, [user]);
+
+  const getInitials = (name: string | null) => {
+    if (!name) return "DR";
+    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-1">
+              Welcome back, {profile?.full_name?.split(" ")[0] || "Patient"}
+            </h1>
+            <p className="text-muted-foreground">Here&apos;s your health overview</p>
+          </div>
+          <div className="flex gap-3">
+            <Link to="/find-doctors">
+              <Button className="gap-2">
+                <Stethoscope className="h-4 w-4" />
+                Find a Doctor
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Link to="/find-doctors" className="block">
+            <Card className="hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer h-full">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Stethoscope className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">Find Doctor</p>
+                  <p className="text-xs text-muted-foreground">Browse specialists</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link to="/conversations" className="block">
+            <Card className="hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer h-full">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <MessageSquare className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">Messages</p>
+                  <p className="text-xs text-muted-foreground">Chat with doctors</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Card className="hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer h-full">
+            <CardContent className="p-5 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Video className="h-6 w-6 text-primary" />
               </div>
-              <p className="text-2xl font-bold text-foreground">{v.value}</p>
-              <p className="text-sm text-muted-foreground">{v.label}</p>
+              <div>
+                <p className="font-medium text-foreground">Video Call</p>
+                <p className="text-xs text-muted-foreground">Start consultation</p>
+              </div>
             </CardContent>
           </Card>
-        ))}
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Appointments */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Upcoming Appointments</CardTitle>
-            <Button size="sm">Book New</Button>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {upcomingAppointments.map((a) => (
-              <div key={a.doctor + a.date} className="p-3 rounded-lg bg-muted/50">
-                <p className="font-medium text-foreground">{a.doctor}</p>
-                <p className="text-sm text-muted-foreground">{a.specialty} · {a.date} at {a.time}</p>
+          
+          <Card className="hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer h-full">
+            <CardContent className="p-5 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-primary" />
               </div>
-            ))}
-          </CardContent>
-        </Card>
+              <div>
+                <p className="font-medium text-foreground">Appointments</p>
+                <p className="text-xs text-muted-foreground">Schedule visit</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Medications */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Current Medications</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {medications.map((m) => (
-              <div key={m.name} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div>
-                  <p className="font-medium text-foreground">{m.name} — {m.dosage}</p>
-                  <p className="text-sm text-muted-foreground">{m.frequency}</p>
+        {/* Vitals */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {vitals.map((v) => (
+            <Card key={v.label}>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center`}>
+                    <v.icon className={`h-5 w-5 ${v.color}`} />
+                  </div>
+                  <Badge variant="secondary" className="bg-success/10 text-success">{v.status}</Badge>
                 </div>
-                <span className="text-xs text-muted-foreground">Refill: {m.refillDate}</span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+                <p className="text-2xl font-bold text-foreground">{v.value}</p>
+                <p className="text-sm text-muted-foreground">{v.label}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Recent Conversations */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Recent Conversations</CardTitle>
+              <Link to="/conversations">
+                <Button variant="ghost" size="sm" className="gap-1">
+                  View All
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {loadingConvs ? (
+                <div className="text-center py-8 text-muted-foreground">Loading...</div>
+              ) : conversations.length === 0 ? (
+                <div className="text-center py-8">
+                  <MessageSquare className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground mb-3">No conversations yet</p>
+                  <Link to="/find-doctors">
+                    <Button size="sm" className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      Find a Doctor
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                conversations.map((conv) => (
+                  <Link key={conv.id} to={`/chat/${conv.id}`} className="block">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors">
+                      <Avatar className="h-11 w-11">
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {getInitials(conv.doctor_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <p className="font-medium text-foreground truncate">
+                            {conv.doctor_name || "Doctor"}
+                          </p>
+                          {conv.unread_count > 0 && (
+                            <Badge className="bg-primary text-primary-foreground">
+                              {conv.unread_count}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {conv.specialization} {conv.last_message ? `· ${conv.last_message}` : ""}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Upcoming Appointments */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Upcoming Appointments</CardTitle>
+              <Button size="sm" className="gap-1">
+                <Plus className="h-4 w-4" />
+                Book New
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {upcomingAppointments.map((a) => (
+                <div key={a.doctor + a.date} className="p-4 rounded-xl bg-muted/50">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <p className="font-medium text-foreground">{a.doctor}</p>
+                      <p className="text-sm text-muted-foreground">{a.specialty}</p>
+                    </div>
+                    <Badge variant="outline" className="border-primary/30 text-primary">
+                      Scheduled
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    <span>{a.date} at {a.time}</span>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default PatientDashboard;
