@@ -5,13 +5,17 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import DoctorRegister from "./pages/DoctorRegister.tsx";
-import DoctorDashboard from "./pages/DoctorDashboard.tsx";
-import PatientDashboard from "./pages/PatientDashboard.tsx";
-import Login from "./pages/Login.tsx";
-import Signup from "./pages/Signup.tsx";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import DoctorRegister from "./pages/DoctorRegister";
+import DoctorDashboard from "./pages/DoctorDashboard";
+import PatientDashboard from "./pages/PatientDashboard";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Chat from "./pages/Chat";
+import Conversations from "./pages/Conversations";
+import FindDoctors from "./pages/FindDoctors";
+import VideoCall from "./pages/VideoCall";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +34,10 @@ const App = () => (
               <Route path="/doctor-register" element={<DoctorRegister />} />
               <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
               <Route path="/patient-dashboard" element={<PatientDashboard />} />
+              <Route path="/conversations" element={<Conversations />} />
+              <Route path="/chat/:conversationId" element={<Chat />} />
+              <Route path="/find-doctors" element={<FindDoctors />} />
+              <Route path="/video-call/:roomId" element={<VideoCall />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
