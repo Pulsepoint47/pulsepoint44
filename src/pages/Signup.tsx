@@ -170,11 +170,11 @@ const Signup = () => {
                   Change role
                 </button>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-soft">
                     {form.role === "doctor" ? (
-                      <Stethoscope className="h-5 w-5 text-primary" />
+                      <Stethoscope className="h-5 w-5 text-primary-foreground" />
                     ) : (
-                      <UserCircle className="h-5 w-5 text-primary" />
+                      <UserCircle className="h-5 w-5 text-primary-foreground" />
                     )}
                   </div>
                   <div>
@@ -276,6 +276,7 @@ const Signup = () => {
             </Card>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
