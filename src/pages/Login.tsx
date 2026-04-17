@@ -41,19 +41,22 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <div className="absolute inset-0 bg-gradient-hero pointer-events-none" aria-hidden />
+      <div className="relative">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 lg:py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
           {/* Left side - Features */}
-          <div className="hidden lg:block space-y-8">
+          <div className="hidden lg:block space-y-8 animate-fade-in-up">
             <div>
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-6">
-                <Heart className="h-7 w-7 text-primary" />
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
+                <Heart className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-medium text-primary">Trusted Healthcare Platform</span>
               </div>
-              <h1 className="text-4xl font-bold text-foreground mb-4">
-                Welcome Back to PulsePoint
+              <h1 className="text-4xl xl:text-5xl font-bold text-foreground mb-4 tracking-tight">
+                Welcome back to <span className="text-gradient-primary">PulsePoint</span>
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Continue your healthcare journey with secure access to your account, 
@@ -61,18 +64,18 @@ const Login = () => {
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[
                 { icon: MessageSquare, title: "Instant Messaging", description: "Pick up where you left off with your doctor" },
-                { icon: Shield, title: "Secure Access", description: "Your health data is protected with encryption" },
-                { icon: Clock, title: "Quick Access", description: "Get to your dashboard in seconds" },
+                { icon: Shield, title: "Bank-Grade Security", description: "End-to-end encryption on all health data" },
+                { icon: Clock, title: "Always Available", description: "24/7 access to your care, anywhere" },
               ].map((feature) => (
-                <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-muted/50">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="h-5 w-5 text-primary" />
+                <div key={feature.title} className="flex items-start gap-4 p-4 rounded-2xl bg-card/60 backdrop-blur border border-border/60 hover:border-primary/30 hover:shadow-soft transition-smooth">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0 shadow-soft">
+                    <feature.icon className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-foreground">{feature.title}</h3>
+                    <h3 className="font-semibold text-foreground">{feature.title}</h3>
                     <p className="text-sm text-muted-foreground">{feature.description}</p>
                   </div>
                 </div>
@@ -81,15 +84,15 @@ const Login = () => {
           </div>
 
           {/* Right side - Login Form */}
-          <div className="w-full max-w-md mx-auto lg:mx-0">
-            <Card className="border-border shadow-lg">
+          <div className="w-full max-w-md mx-auto lg:mx-0 animate-scale-in">
+            <Card className="border-border/60 shadow-elegant backdrop-blur bg-card/95">
               <CardHeader className="space-y-1 text-center pb-2">
-                <div className="lg:hidden inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 mx-auto mb-2">
-                  <Heart className="h-6 w-6 text-primary" />
+                <div className="lg:hidden inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-primary mx-auto mb-2 shadow-soft">
+                  <Heart className="h-6 w-6 text-primary-foreground" />
                 </div>
-                <CardTitle className="text-2xl">Sign In</CardTitle>
+                <CardTitle className="text-2xl tracking-tight">Sign in to your account</CardTitle>
                 <CardDescription>
-                  Enter your credentials to access your account
+                  Enter your credentials to continue
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-4">
@@ -146,6 +149,7 @@ const Login = () => {
             </Card>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
