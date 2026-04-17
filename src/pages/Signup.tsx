@@ -71,19 +71,23 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <div className="absolute inset-0 bg-gradient-hero pointer-events-none" aria-hidden />
+      <div className="relative">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 lg:py-16">
         <div className="max-w-lg mx-auto">
           {/* Step 1: Role Selection */}
           {step === 1 && (
-            <div className="space-y-8">
-              <div className="text-center space-y-2">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-                  <Heart className="h-8 w-8 text-primary" />
+            <div className="space-y-8 animate-fade-in-up">
+              <div className="text-center space-y-3">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-primary mx-auto shadow-elegant">
+                  <Heart className="h-8 w-8 text-primary-foreground" />
                 </div>
-                <h1 className="text-3xl font-bold text-foreground">Join PulsePoint</h1>
+                <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+                  Join <span className="text-gradient-primary">PulsePoint</span>
+                </h1>
                 <p className="text-muted-foreground">Choose how you want to use our platform</p>
               </div>
 
@@ -91,13 +95,13 @@ const Signup = () => {
                 <button
                   onClick={() => selectRole("patient")}
                   className={cn(
-                    "group relative p-6 rounded-2xl border-2 bg-card text-left transition-all duration-200 hover:border-primary hover:shadow-lg",
-                    form.role === "patient" ? "border-primary shadow-lg" : "border-border"
+                    "group relative p-6 rounded-2xl border-2 bg-card/95 backdrop-blur text-left transition-smooth hover:border-primary hover:shadow-elegant hover:-translate-y-0.5",
+                    form.role === "patient" ? "border-primary shadow-elegant" : "border-border/60"
                   )}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <UserCircle className="h-7 w-7 text-primary" />
+                    <div className="w-14 h-14 rounded-xl bg-gradient-primary flex items-center justify-center shadow-soft group-hover:shadow-glow transition-smooth">
+                      <UserCircle className="h-7 w-7 text-primary-foreground" />
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg text-foreground mb-1">I&apos;m a Patient</h3>
@@ -119,13 +123,13 @@ const Signup = () => {
                 <button
                   onClick={() => selectRole("doctor")}
                   className={cn(
-                    "group relative p-6 rounded-2xl border-2 bg-card text-left transition-all duration-200 hover:border-primary hover:shadow-lg",
-                    form.role === "doctor" ? "border-primary shadow-lg" : "border-border"
+                    "group relative p-6 rounded-2xl border-2 bg-card/95 backdrop-blur text-left transition-smooth hover:border-primary hover:shadow-elegant hover:-translate-y-0.5",
+                    form.role === "doctor" ? "border-primary shadow-elegant" : "border-border/60"
                   )}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <Stethoscope className="h-7 w-7 text-primary" />
+                    <div className="w-14 h-14 rounded-xl bg-gradient-primary flex items-center justify-center shadow-soft group-hover:shadow-glow transition-smooth">
+                      <Stethoscope className="h-7 w-7 text-primary-foreground" />
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg text-foreground mb-1">I&apos;m a Doctor</h3>
@@ -156,7 +160,7 @@ const Signup = () => {
 
           {/* Step 2: Account Details */}
           {step === 2 && (
-            <Card className="border-border shadow-lg">
+            <Card className="border-border/60 shadow-elegant backdrop-blur bg-card/95 animate-scale-in">
               <CardHeader className="space-y-1">
                 <button
                   onClick={() => setStep(1)}
