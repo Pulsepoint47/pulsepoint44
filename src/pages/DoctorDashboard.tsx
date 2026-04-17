@@ -186,17 +186,17 @@ const DoctorDashboard = () => {
         {/* Stats */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((s) => (
-            <Card key={s.label}>
+            <Card key={s.label} className="border-border/60 hover:shadow-soft transition-smooth">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-3">
-                  <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center`}>
+                  <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
                     <s.icon className={`h-5 w-5 ${s.color}`} />
                   </div>
-                  <span className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-full">
+                  <span className="text-xs text-success font-medium bg-success/10 px-2 py-1 rounded-full">
                     {s.change}
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                <p className="text-2xl font-bold text-foreground tracking-tight">{s.value}</p>
                 <p className="text-sm text-muted-foreground">{s.label}</p>
               </CardContent>
             </Card>

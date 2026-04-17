@@ -144,71 +144,46 @@ const PatientDashboard = () => {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Link to="/find-doctors" className="block">
-            <Card className="hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer h-full">
-              <CardContent className="p-5 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Stethoscope className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium text-foreground">Find Doctor</p>
-                  <p className="text-xs text-muted-foreground">Browse specialists</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-          
-          <Link to="/conversations" className="block">
-            <Card className="hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer h-full">
-              <CardContent className="p-5 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <MessageSquare className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium text-foreground">Messages</p>
-                  <p className="text-xs text-muted-foreground">Chat with doctors</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-          
-          <Card className="hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer h-full">
-            <CardContent className="p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Video className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium text-foreground">Video Call</p>
-                <p className="text-xs text-muted-foreground">Start consultation</p>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer h-full">
-            <CardContent className="p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium text-foreground">Appointments</p>
-                <p className="text-xs text-muted-foreground">Schedule visit</p>
-              </div>
-            </CardContent>
-          </Card>
+          {[
+            { to: "/find-doctors", icon: Stethoscope, title: "Find Doctor", desc: "Browse specialists" },
+            { to: "/conversations", icon: MessageSquare, title: "Messages", desc: "Chat with doctors" },
+            { to: "/conversations", icon: Video, title: "Video Call", desc: "Start consultation" },
+            { to: "/patient-dashboard", icon: Calendar, title: "Appointments", desc: "Schedule visit" },
+          ].map((action) => (
+            <Link key={action.title} to={action.to} className="block group">
+              <Card className="hover:shadow-elegant hover:border-primary/40 hover:-translate-y-0.5 transition-smooth cursor-pointer h-full border-border/60">
+                <CardContent className="p-5 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-soft group-hover:shadow-glow transition-smooth">
+                    <action.icon className="h-6 w-6 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">{action.title}</p>
+                    <p className="text-xs text-muted-foreground">{action.desc}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
 
         {/* Vitals */}
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Your Vitals</h2>
+            <p className="text-sm text-muted-foreground">Latest readings from connected devices</p>
+          </div>
+        </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {vitals.map((v) => (
-            <Card key={v.label}>
+            <Card key={v.label} className="border-border/60 hover:shadow-soft transition-smooth">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center`}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
                     <v.icon className={`h-5 w-5 ${v.color}`} />
                   </div>
-                  <Badge variant="secondary" className="bg-success/10 text-success">{v.status}</Badge>
+                  <Badge variant="secondary" className="bg-success/10 text-success border-0">{v.status}</Badge>
                 </div>
-                <p className="text-2xl font-bold text-foreground">{v.value}</p>
+                <p className="text-2xl font-bold text-foreground tracking-tight">{v.value}</p>
                 <p className="text-sm text-muted-foreground">{v.label}</p>
               </CardContent>
             </Card>
