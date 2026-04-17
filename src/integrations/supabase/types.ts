@@ -7,8 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -16,55 +14,241 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
-          created_at: string
-          full_name: string | null
           id: string
-          license_number: string | null
-          phone: string | null
-          role: Database["public"]["Enums"]["app_role"]
-          specialization: string | null
-          updated_at: string
           user_id: string
+          full_name: string | null
+          email: string | null
+          phone: string | null
+          avatar_url: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string
-          full_name?: string | null
           id?: string
-          license_number?: string | null
-          phone?: string | null
-          role?: Database["public"]["Enums"]["app_role"]
-          specialization?: string | null
-          updated_at?: string
           user_id: string
+          full_name?: string | null
+          email?: string | null
+          phone?: string | null
+          avatar_url?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string
-          full_name?: string | null
           id?: string
-          license_number?: string | null
-          phone?: string | null
-          role?: Database["public"]["Enums"]["app_role"]
-          specialization?: string | null
-          updated_at?: string
           user_id?: string
+          full_name?: string | null
+          email?: string | null
+          phone?: string | null
+          avatar_url?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
-      user_roles: {
+      doctors: {
         Row: {
           id: string
-          role: Database["public"]["Enums"]["app_role"]
           user_id: string
+          specialization: string
+          license_number: string
+          years_experience: number
+          bio: string | null
+          consultation_fee: number
+          is_available: boolean
+          created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
-          role: Database["public"]["Enums"]["app_role"]
           user_id: string
+          specialization: string
+          license_number: string
+          years_experience?: number
+          bio?: string | null
+          consultation_fee?: number
+          is_available?: boolean
+          created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+          specialization?: string
+          license_number?: string
+          years_experience?: number
+          bio?: string | null
+          consultation_fee?: number
+          is_available?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      patients: {
+        Row: {
+          id: string
+          user_id: string
+          date_of_birth: string | null
+          blood_type: string | null
+          allergies: string[] | null
+          medical_history: string | null
+          emergency_contact: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date_of_birth?: string | null
+          blood_type?: string | null
+          allergies?: string[] | null
+          medical_history?: string | null
+          emergency_contact?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date_of_birth?: string | null
+          blood_type?: string | null
+          allergies?: string[] | null
+          medical_history?: string | null
+          emergency_contact?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          id: string
+          doctor_id: string
+          patient_id: string
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          doctor_id: string
+          patient_id: string
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          doctor_id?: string
+          patient_id?: string
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          id: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          message_type: string
+          is_read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          message_type?: string
+          is_read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          sender_id?: string
+          content?: string
+          message_type?: string
+          is_read?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      video_calls: {
+        Row: {
+          id: string
+          conversation_id: string
+          initiated_by: string
+          room_id: string
+          status: string
+          started_at: string | null
+          ended_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          initiated_by: string
+          room_id: string
+          status?: string
+          started_at?: string | null
+          ended_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          initiated_by?: string
+          room_id?: string
+          status?: string
+          started_at?: string | null
+          ended_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      appointments: {
+        Row: {
+          id: string
+          doctor_id: string
+          patient_id: string
+          scheduled_at: string
+          duration_minutes: number
+          type: string
+          status: string
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          doctor_id: string
+          patient_id: string
+          scheduled_at: string
+          duration_minutes?: number
+          type?: string
+          status?: string
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          doctor_id?: string
+          patient_id?: string
+          scheduled_at?: string
+          duration_minutes?: number
+          type?: string
+          status?: string
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -73,13 +257,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       app_role: "admin" | "doctor" | "patient"
@@ -91,7 +269,6 @@ export type Database = {
 }
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
-
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
